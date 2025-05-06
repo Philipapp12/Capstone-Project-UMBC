@@ -22,8 +22,6 @@ Insights and Implications
 
 Future Work
 
-License
-
 # Project Description
 The project focuses on predicting suicide risk levels using NLP techniques on text data from Reddit posts. By analyzing linguistic patterns and content in these posts, we aim to develop models that can accurately identify individuals expressing suicidal ideation or emotional distress.
 
