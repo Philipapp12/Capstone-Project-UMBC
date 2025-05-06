@@ -34,10 +34,15 @@ Neutral/positive subreddits: r/AskReddit, r/movies, r/happy
 
 
 The dataset includes features such as:
+
 Post text content
+
 Creation timestamp
+
 Engagement metrics (upvotes, comments)
+
 Sentiment scores
+
 Risk level labels (High, Medium, Low)
 
 The cleaned dataset is saved as Cleaned_SuicideWatch_Dataset.csv.
