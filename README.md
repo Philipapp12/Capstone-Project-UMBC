@@ -23,3 +23,22 @@ Insights and Implications
 Future Work
 
 License
+
+# Project Description
+The project focuses on predicting suicide risk levels using NLP techniques on text data from Reddit posts. By analyzing linguistic patterns and content in these posts, we aim to develop models that can accurately identify individuals expressing suicidal ideation or emotional distress.
+
+# Dataset
+The dataset consists of posts from the following subreddits:
+Mental health-related subreddits: r/SuicideWatch, r/depression, r/mentalhealth
+Neutral/positive subreddits: r/AskReddit, r/movies, r/happy
+
+
+The dataset includes features such as:
+Post text content
+Creation timestamp
+Engagement metrics (upvotes, comments)
+Sentiment scores
+Risk level labels (High, Medium, Low)
+
+The cleaned dataset is saved as Cleaned_SuicideWatch_Dataset.csv.
+
