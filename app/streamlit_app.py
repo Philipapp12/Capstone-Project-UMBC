@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import StackingClassifier
 from sklearn.preprocessing import LabelEncoder
 import joblib
@@ -20,11 +19,13 @@ st.set_page_config(
 @st.cache_resource
 def load_models():
     try:
-        # Load the pre-trained models and vectorizer
+        # Load the vectorizer and set max_features to 10000
         vectorizer = joblib.load("tfidf_vectorizer.joblib")
-        stacking_clf = joblib.load("stacking_classifier.pkl")
+        vectorizer.max_features = 10000  # Ensure the vectorizer uses the same number of features as the model
+
+        model = joblib.load("stacking_classifier.pkl")
         label_encoder = joblib.load("label_encoder.joblib")
-        return vectorizer, stacking_clf, label_encoder
+        return vectorizer, model, label_encoder
     except Exception as e:
         st.error(f"Error loading models: {e}")
         raise e
@@ -33,10 +34,10 @@ vectorizer, stacking_clf, label_encoder = load_models()
 
 # Text cleaning function
 def clean_text(text):
-    text = text.lower()  # Convert to lowercase
-    text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)  # Remove URLs
-    text = re.sub(r'\W', ' ', text)  # Remove non-word characters
-    text = re.sub(r'\d+', '', text)  # Remove digits
+    text = text.lower()
+    text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)
+    text = re.sub(r'\W', ' ', text)
+    text = re.sub(r'\d+', '', text)
     return text.strip()
 
 # Main app
@@ -59,7 +60,6 @@ def main():
     Low, Medium, or High risk categories.
     """)
     
-    # User input
     user_input = st.text_area("Enter text to analyze:", height=200)
     
     if st.button("Assess Risk"):
@@ -78,21 +78,19 @@ def main():
                 
                 st.subheader("Risk Assessment Result:")
                 
-                # Display result based on prediction
                 if predicted_label == "High":
                     st.error(f"**High Risk** - The text indicates potential high suicidal risk.")
-                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob) * 100))
+                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob)*100))
                     st.write("**Recommendation:** Immediate intervention may be required. Please consider reaching out to a mental health professional or crisis support services.")
                 elif predicted_label == "Medium":
                     st.warning(f"**Medium Risk** - The text indicates potential moderate suicidal risk.")
-                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob) * 100))
+                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob)*100))
                     st.write("**Recommendation:** Further evaluation is recommended. Consider reaching out to a mental health professional.")
                 else:
                     st.success(f"**Low Risk** - The text indicates low suicidal risk.")
-                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob) * 100))
+                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob)*100))
                     st.write("**Recommendation:** Continue monitoring well-being. Support services are always available if needed.")
                 
-                # Show probabilities for all classes
                 st.subheader("Risk Level Probabilities:")
                 prob_df = pd.DataFrame({
                     "Risk Level": label_encoder.classes_,
@@ -100,7 +98,6 @@ def main():
                 })
                 st.dataframe(prob_df.style.format({"Probability": "{:.2%}"}))
                 
-                # Display disclaimer
                 st.markdown("---")
                 st.warning("""
                 **Disclaimer:** This is a demonstration model intended for educational purposes. 
