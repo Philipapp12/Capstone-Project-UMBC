@@ -13,13 +13,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Load the models
+# Load the models with correct filenames
 @st.cache_resource
 def load_models():
     try:
-        vectorizer = joblib.load("vectorizer.pkl")
-        model = joblib.load("stacking_model.pkl")
-        label_encoder = joblib.load("label_encoder.pkl")
+        vectorizer = joblib.load("tfidf_vectorizer.joblib")  # Corrected filename
+        model = joblib.load("stacking_classifier.pkl")       # Corrected filename
+        label_encoder = joblib.load("label_encoder.joblib")  # Corrected filename
         return vectorizer, model, label_encoder
     except Exception as e:
         st.error(f"Error loading models: {e}")
@@ -27,7 +27,7 @@ def load_models():
 
 vectorizer, stacking_clf, label_encoder = load_models()
 
-# Clean text
+# Clean text function (no changes)
 def clean_text(text):
     text = text.lower()
     text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)
@@ -35,7 +35,7 @@ def clean_text(text):
     text = re.sub(r'\d+', '', text)
     return text.strip()
 
-# App logic
+# Main app function (no changes to logic)
 def main():
     st.title("Suicide Prevention Risk Assessment")
     st.sidebar.header("About")
