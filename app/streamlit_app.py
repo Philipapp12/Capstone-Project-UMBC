@@ -1,38 +1,16 @@
 import streamlit as st
-import pandas as pd
+import pickle
 import numpy as np
-import re
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.ensemble import StackingClassifier
-from sklearn.preprocessing import LabelEncoder
-import joblib
 
-# Set page configuration
-st.set_page_config(
-    page_title="Suicide Prevention Model",
-    page_icon="🔒",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+# Load the vectorizer and model
+with open('tfidf_vectorizer.pkl', 'rb') as f:
+    vectorizer = pickle.load(f)
 
-# Load trained models and vectorizer
-@st.cache_resource
-def load_models():
-    try:
-        # Load the vectorizer and set max_features to 10000
-        vectorizer = joblib.load("tfidf_vectorizer.joblib")
-        vectorizer.max_features = 10000  # Ensure the vectorizer uses the same number of features as the model
+with open('logistic_regression_model.pkl', 'rb') as f:
+    model = pickle.load(f)
 
-        model = joblib.load("stacking_classifier.pkl")
-        label_encoder = joblib.load("label_encoder.joblib")
-        return vectorizer, model, label_encoder
-    except Exception as e:
-        st.error(f"Error loading models: {e}")
-        raise e
-
-vectorizer, stacking_clf, label_encoder = load_models()
-
-# Text cleaning function
+# Your text cleaning function
 def clean_text(text):
     text = text.lower()
     text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)
@@ -40,71 +18,18 @@ def clean_text(text):
     text = re.sub(r'\d+', '', text)
     return text.strip()
 
-# Main app
-def main():
-    st.title("Suicide Prevention Risk Assessment")
-    st.sidebar.header("About")
-    st.sidebar.markdown("""
-    **Data 606 Capstone in Data Science**
-    
-    This app demonstrates a predictive model for suicide prevention using NLP on Reddit data.
-    The model helps identify individuals at risk based on their text posts.
-    """)
-    
-    st.markdown("""
-    ### Predictive Model for Suicide Prevention
-    
-    This application uses Natural Language Processing (NLP) techniques to analyze text and predict 
-    the risk level of suicidal ideation. The model was trained on data from Reddit posts 
-    (including mental health subreddits and general subreddits) and can classify text into 
-    Low, Medium, or High risk categories.
-    """)
-    
-    user_input = st.text_area("Enter text to analyze:", height=200)
-    
-    if st.button("Assess Risk"):
-        if not user_input.strip():
-            st.warning("Please enter some text to analyze.")
-        else:
-            with st.spinner("Analyzing text..."):
-                # Clean and transform input
-                cleaned_text = clean_text(user_input)
-                transformed_text = vectorizer.transform([cleaned_text])
-                
-                # Predict
-                prediction = stacking_clf.predict(transformed_text)
-                predicted_prob = stacking_clf.predict_proba(transformed_text)
-                predicted_label = label_encoder.inverse_transform(prediction)[0]
-                
-                st.subheader("Risk Assessment Result:")
-                
-                if predicted_label == "High":
-                    st.error(f"**High Risk** - The text indicates potential high suicidal risk.")
-                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob)*100))
-                    st.write("**Recommendation:** Immediate intervention may be required. Please consider reaching out to a mental health professional or crisis support services.")
-                elif predicted_label == "Medium":
-                    st.warning(f"**Medium Risk** - The text indicates potential moderate suicidal risk.")
-                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob)*100))
-                    st.write("**Recommendation:** Further evaluation is recommended. Consider reaching out to a mental health professional.")
-                else:
-                    st.success(f"**Low Risk** - The text indicates low suicidal risk.")
-                    st.write("Confidence: {:.2f}%".format(np.max(predicted_prob)*100))
-                    st.write("**Recommendation:** Continue monitoring well-being. Support services are always available if needed.")
-                
-                st.subheader("Risk Level Probabilities:")
-                prob_df = pd.DataFrame({
-                    "Risk Level": label_encoder.classes_,
-                    "Probability": predicted_prob[0]
-                })
-                st.dataframe(prob_df.style.format({"Probability": "{:.2%}"}))
-                
-                st.markdown("---")
-                st.warning("""
-                **Disclaimer:** This is a demonstration model intended for educational purposes. 
-                It should not be used as a substitute for professional mental health assessment 
-                and intervention. Actual implementation of such models should be done with 
-                appropriate clinical oversight and ethical considerations.
-                """)
+# Streamlit input
+user_input = st.text_area("Enter text to predict risk level:")
 
-if __name__ == "__main__":
-    main()
+if st.button("Predict"):
+    # Clean the input text
+    cleaned_text = clean_text(user_input)
+    
+    # Transform the cleaned text using the loaded vectorizer
+    transformed_text = vectorizer.transform([cleaned_text])
+    
+    # Make prediction
+    prediction = model.predict(transformed_text)
+    
+    # Display result
+    st.write(f"Predicted Risk Level: {prediction[0]}")
