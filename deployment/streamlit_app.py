@@ -16,56 +16,92 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS for Styling (Optional) ---
+# --- Custom CSS for Styling ---
 st.markdown("""
 <style>
+/* General text area styling */
 .stTextArea [data-baseweb="base-input"] {
-    background-color: #f0f2f6; /* Light gray background for text area */
+    background-color: #ffffff; /* White background for better contrast */
+    border: 1px solid #cccccc; /* Add a subtle border */
+    padding: 10px; /* Add some internal padding */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Increase font size */
+    line-height: 1.5; /* Improve readability */
+    color: #333333; /* Darker text color */
 }
+
+/* Style for when the text area is focused */
+.stTextArea [data-baseweb="base-input"]:focus {
+    border-color: #4CAF50; /* Highlight border on focus */
+    box-shadow: 0 0 0 0.1rem rgba(76, 175, 80, 0.25); /* Add a subtle glow on focus */
+}
+
+/* Style for the placeholder text */
+.stTextArea [data-baseweb="base-input"] textarea::placeholder {
+    color: #999999; /* Lighter color for placeholder */
+}
+
+/* Button Styling */
 .stButton>button {
     background-color: #4CAF50; /* Green background */
     color: white;
     font-weight: bold;
+    padding: 10px 20px; /* Increase button padding */
+    border-radius: 5px; /* Rounded corners */
+    border: none; /* Remove default border */
+    cursor: pointer; /* Indicate it's clickable */
+    transition: background-color 0.3s ease; /* Smooth transition on hover */
 }
 .stButton>button:hover {
     background-color: #45a049; /* Darker green on hover */
     color: white;
 }
+
+/* Message Box Styling */
 .stSuccess {
     background-color: #e8f5e9; /* Light green background */
     color: #1b5e20; /* Dark green text */
     border-left: 5px solid #4CAF50; /* Green border */
-    padding: 10px;
+    padding: 15px; /* Increased padding */
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px; /* Increased margin */
 }
 .stError {
     background-color: #ffebee; /* Light red background */
     color: #b71c1c; /* Dark red text */
     border-left: 5px solid #f44336; /* Red border */
-    padding: 10px;
+    padding: 15px;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 .stWarning {
     background-color: #fffde7; /* Light yellow background */
     color: #f57f17; /* Dark yellow text */
     border-left: 5px solid #ffeb3b; /* Yellow border */
-    padding: 10px;
+    padding: 15px;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
 .stInfo {
     background-color: #e3f2fd; /* Light blue background */
     color: #0d47a1; /* Dark blue text */
     border-left: 5px solid #2196f3; /* Blue border */
-    padding: 10px;
+    padding: 15px;
     border-radius: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
 }
+
+/* Heading Styling */
 h1, h2, h3, h4, h5, h6 {
     color: #333333; /* Darker text for headings */
 }
+
+/* Optional: Style for the main content area */
+.main .block-container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -108,7 +144,12 @@ st.markdown("""
 
 # --- Input Area ---
 st.subheader("Enter the post text below:")
-user_input = st.text_area("", height=200, help="Paste or type the text you want to analyze.") # Removed the label and added help text
+user_input = st.text_area(
+    "", # Empty label, subheader serves as the label
+    height=250, # Increased height
+    help="Paste or type the text you want to analyze.",
+    placeholder="Type or paste the text here..." # Add placeholder text
+)
 
 # --- Prediction Button and Spinner ---
 if st.button("Analyze Post"): # Changed button text
