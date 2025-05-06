@@ -8,98 +8,135 @@ import os
 # By default, assumes they are in the same directory as the script
 MODEL_DIR = "." # Or "models", "assets", etc. if you put them in a subdirectory
 
-# --- Set Page Config (Optional but Recommended) ---
+# --- Set Page Config ---
 st.set_page_config(
     page_title="Suicidal Post Prediction",
-    page_icon="🚨", # You can use emojis or paths to image files
-    layout="centered", # or "wide"
+    page_icon="🚨",
+    layout="wide", # Changed to wide layout for more space
     initial_sidebar_state="expanded"
 )
 
-# --- Custom CSS for Styling ---
+# --- Custom CSS for Enhanced Styling ---
 st.markdown("""
 <style>
-/* General text area styling */
+/* General Body and Font */
+body {
+    font-family: 'Arial', sans-serif;
+    color: #333333;
+    background-color: #f8f9fa; /* Light background */
+}
+
+/* Header Styling */
+.stTitle {
+    color: #b71c1c; /* Dark red for the title */
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Subheader Styling */
+h2 {
+    color: #555555;
+    border-bottom: 1px solid #eeeeee;
+    padding-bottom: 5px;
+    margin-top: 20px;
+    margin-bottom: 15px;
+}
+
+/* Text Area Styling */
 .stTextArea [data-baseweb="base-input"] {
-    background-color: #ffffff; /* White background for better contrast */
-    border: 1px solid #cccccc; /* Add a subtle border */
-    padding: 10px; /* Add some internal padding */
-    border-radius: 5px; /* Rounded corners */
-    font-size: 16px; /* Increase font size */
-    line-height: 1.5; /* Improve readability */
-    color: #333333; /* Darker text color */
+    background-color: #ffffff;
+    border: 1px solid #dddddd; /* Lighter border */
+    padding: 15px; /* More padding */
+    border-radius: 8px; /* More rounded corners */
+    font-size: 17px; /* Slightly larger font */
+    line-height: 1.6;
+    color: #333333;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
-/* Style for when the text area is focused */
 .stTextArea [data-baseweb="base-input"]:focus {
-    border-color: #4CAF50; /* Highlight border on focus */
-    box-shadow: 0 0 0 0.1rem rgba(76, 175, 80, 0.25); /* Add a subtle glow on focus */
+    border-color: #f44336; /* Red border on focus */
+    box-shadow: 0 0 8px rgba(244, 67, 54, 0.3); /* Red glow on focus */
 }
 
-/* Style for the placeholder text */
 .stTextArea [data-baseweb="base-input"] textarea::placeholder {
-    color: #999999; /* Lighter color for placeholder */
+    color: #aaaaaa; /* Lighter placeholder */
+    font-style: italic; /* Italic placeholder */
 }
 
 /* Button Styling */
 .stButton>button {
-    background-color: #4CAF50; /* Green background */
+    background-color: #f44336; /* Red button */
     color: white;
     font-weight: bold;
-    padding: 10px 20px; /* Increase button padding */
-    border-radius: 5px; /* Rounded corners */
-    border: none; /* Remove default border */
-    cursor: pointer; /* Indicate it's clickable */
-    transition: background-color 0.3s ease; /* Smooth transition on hover */
+    padding: 12px 25px; /* Larger padding */
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.1s ease; /* Add transform transition */
+    margin-top: 10px; /* Space above button */
 }
 .stButton>button:hover {
-    background-color: #45a049; /* Darker green on hover */
-    color: white;
+    background-color: #d32f2f; /* Darker red on hover */
+}
+.stButton>button:active {
+    transform: scale(0.98); /* Slightly shrink on click */
 }
 
 /* Message Box Styling */
 .stSuccess {
-    background-color: #e8f5e9; /* Light green background */
-    color: #1b5e20; /* Dark green text */
-    border-left: 5px solid #4CAF50; /* Green border */
-    padding: 15px; /* Increased padding */
-    border-radius: 5px;
-    margin-bottom: 15px; /* Increased margin */
+    background-color: #e8f5e9;
+    color: #1b5e20;
+    border-left: 6px solid #4CAF50; /* Thicker border */
+    padding: 20px; /* More padding */
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 .stError {
-    background-color: #ffebee; /* Light red background */
-    color: #b71c1c; /* Dark red text */
-    border-left: 5px solid #f44336; /* Red border */
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    background-color: #ffebee;
+    color: #b71c1c;
+    border-left: 6px solid #f44336;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 .stWarning {
-    background-color: #fffde7; /* Light yellow background */
-    color: #f57f17; /* Dark yellow text */
-    border-left: 5px solid #ffeb3b; /* Yellow border */
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
+    background-color: #fffde7;
+    color: #f57f17;
+    border-left: 6px solid #ffeb3b;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 .stInfo {
-    background-color: #e3f2fd; /* Light blue background */
-    color: #0d47a1; /* Dark blue text */
-    border-left: 5px solid #2196f3; /* Blue border */
-    padding: 15px;
-    border-radius: 5px;
+    background-color: #e3f2fd;
+    color: #0d47a1;
+    border-left: 6px solid #2196f3;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* Sidebar Styling */
+.sidebar .sidebar-content {
+    background-color: #e0e0e0; /* Light gray sidebar */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.sidebar .sidebar-content h2 {
+    color: #333333;
+    border-bottom: 1px solid #bbbbbb;
     margin-bottom: 15px;
 }
 
-/* Heading Styling */
-h1, h2, h3, h4, h5, h6 {
-    color: #333333; /* Darker text for headings */
-}
-
-/* Optional: Style for the main content area */
-.main .block-container {
-    padding-top: 3rem;
-    padding-bottom: 3rem;
+/* Improve spacing for list items in sidebar */
+.sidebar .sidebar-content li {
+    margin-bottom: 5px;
 }
 
 </style>
@@ -107,7 +144,6 @@ h1, h2, h3, h4, h5, h6 {
 
 
 # --- Load the trained objects ---
-# Use st.cache_resource to load models only once across sessions
 @st.cache_resource
 def load_models(model_directory):
     try:
@@ -127,7 +163,7 @@ def load_models(model_directory):
         st.write(f"- {os.path.join(model_directory, 'label_encoder.joblib')}")
         st.write(f"- {os.path.join(model_directory, 'tfidf_vectorizer.joblib')}")
         st.write(f"- {os.path.join(model_directory, 'stacking_classifier.joblib')}")
-        st.stop() # Stop the app if files are not found
+        st.stop()
     except Exception as e:
         st.error(f"An error occurred while loading the model files: {e}")
         st.stop()
@@ -136,71 +172,83 @@ label_encoder, tfidf_vectorizer, stacking_classifier = load_models(MODEL_DIR)
 
 
 # --- Main App Content ---
-st.title("🚨 Suicidal Post Prediction App") # Added an emoji to the title
+
+st.markdown('<h1 class="stTitle">🚨 Suicidal Post Prediction App</h1>', unsafe_allow_html=True) # Use custom styled title
+
 st.markdown("""
+    <p style='text-align: center; font-size: 1.1em; margin-bottom: 30px;'>
     Welcome to the Suicidal Post Prediction App. This tool uses a machine learning model to analyze text and predict whether it indicates suicidal intent.
-    **Please remember that this tool is for informational purposes only and should not be used as a substitute for professional help.**
-""")
+    </p>
+    <div class="stWarning" style="text-align: center;">
+    <strong>Important Disclaimer:</strong> This tool is for informational purposes only and should NOT be used as a substitute for professional help.
+    </div>
+""", unsafe_allow_html=True)
+
 
 # --- Input Area ---
 st.subheader("Enter the post text below:")
 user_input = st.text_area(
-    "", # Empty label, subheader serves as the label
-    height=250, # Increased height
+    "", # Empty label
+    height=300, # Increased height again
     help="Paste or type the text you want to analyze.",
-    placeholder="Type or paste the text here..." # Add placeholder text
+    placeholder="Type or paste the text here...",
+    key="post_input" # Added a key for potential future use
 )
 
 # --- Prediction Button and Spinner ---
-if st.button("Analyze Post"): # Changed button text
-    if user_input:
-        with st.spinner("Analyzing..."): # Add a spinner while processing
-            # --- Preprocess the input ---
-            try:
-                input_vectorized = tfidf_vectorizer.transform([user_input])
-            except Exception as e:
-                st.error(f"Error during text vectorization: {e}")
-                st.stop()
+# Use columns to center the button (optional, but can look nice)
+col1, col2, col3 = st.columns([1, 2, 1])
+with col2: # Place the button in the center column
+    if st.button("Analyze Post", use_container_width=True): # Make button fill container width
+        if user_input:
+            with st.spinner("Analyzing..."):
+                # --- Preprocess the input ---
+                try:
+                    input_vectorized = tfidf_vectorizer.transform([user_input])
+                except Exception as e:
+                    st.error(f"Error during text vectorization: {e}")
+                    st.stop()
 
-            # --- Make the prediction ---
-            try:
-                prediction_encoded = stacking_classifier.predict(input_vectorized)
-            except Exception as e:
-                st.error(f"Error during model prediction: {e}")
-                st.stop()
+                # --- Make the prediction ---
+                try:
+                    prediction_encoded = stacking_classifier.predict(input_vectorized)
+                except Exception as e:
+                    st.error(f"Error during model prediction: {e}")
+                    st.stop()
 
-            # --- Decode the prediction ---
-            try:
-                prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
-            except Exception as e:
-                st.error(f"Error during label decoding: {e}")
-                st.stop()
+                # --- Decode the prediction ---
+                try:
+                    prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
+                except Exception as e:
+                    st.error(f"Error during label decoding: {e}")
+                    st.stop()
 
-        # --- Display the result ---
-        st.subheader("Prediction Result:")
-        if prediction_label == "suicide":
-            st.error(f"Based on the analysis, the model predicts this post **indicates suicidal intent**.")
-            st.markdown("""
-            <div class="stWarning">
-            If you or someone you know is in immediate danger, please call emergency services or go to the nearest emergency room.
-            If you need to talk to someone, here are some resources:
-            </div>
-            """, unsafe_allow_html=True)
-            st.write("- **National Suicide Prevention Lifeline:** 988")
-            st.write("- **Crisis Text Line:** Text HOME to 741741")
-            st.write("- **The Trevor Project (for LGBTQ youth):** 1-866-488-7386")
-            st.write("- **International Resources:** [https://ibpf.org/about/global-mental-health-resources/](https://ibpf.org/about/global-mental-health-resources/)") # Added international resource
+            # --- Display the result ---
+            st.subheader("Prediction Result:")
+            if prediction_label == "suicide":
+                st.error(f"Based on the analysis, the model predicts this post **indicates suicidal intent**.")
+                st.markdown("""
+                <div class="stWarning" style="margin-top: 20px;">
+                <strong>If you or someone you know is in immediate danger, please call emergency services or go to the nearest emergency room.</strong>
+                <br><br>
+                If you need to talk to someone, here are some resources:
+                </div>
+                """, unsafe_allow_html=True)
+                st.write("- **National Suicide Prevention Lifeline:** 988")
+                st.write("- **Crisis Text Line:** Text HOME to 741741")
+                st.write("- **The Trevor Project (for LGBTQ youth):** 1-866-488-7386")
+                st.write("- **International Resources:** [https://ibpf.org/about/global-mental-health-resources/](https://ibpf.org/about/global-mental-health-resources/)")
+
+            else:
+                st.success(f"Based on the analysis, the model predicts this post **does not indicate suicidal intent**.")
+                st.markdown("""
+                <div class="stInfo" style="margin-top: 20px;">
+                Please remember that this is a machine learning model's prediction and should not replace professional evaluation.
+                </div>
+                """, unsafe_allow_html=True)
 
         else:
-            st.success(f"Based on the analysis, the model predicts this post **does not indicate suicidal intent**.")
-            st.markdown("""
-            <div class="stInfo">
-            Please remember that this is a machine learning model's prediction and should not replace professional evaluation.
-            </div>
-            """, unsafe_allow_html=True)
-
-    else:
-        st.warning("Please enter some text to analyze.")
+            st.warning("Please enter some text to analyze.")
 
 # --- Optional: Add some explanatory text or instructions in the sidebar ---
 st.sidebar.header("About This App")
@@ -208,10 +256,10 @@ st.sidebar.markdown("""
 This application utilizes a pre-trained machine learning model (specifically, a Stacking Classifier combined with TF-IDF text vectorization) to assess text input for potential indicators of suicidal ideation.
 
 **How it Works:**
-1.  You enter text into the provided box.
-2.  The text is processed using the same TF-IDF vectorization technique that was used during model training.
-3.  The processed text is fed into the Stacking Classifier.
-4.  The model provides a prediction (e.g., "suicide" or "not suicide").
+*   You enter text into the provided box.
+*   The text is processed using the same TF-IDF vectorization technique that was used during model training.
+*   The processed text is fed into the Stacking Classifier.
+*   The model provides a prediction (e.g., "suicide" or "not suicide").
 
 **Important Disclaimer:**
 This tool is intended for educational and informational purposes only. It is NOT a diagnostic tool and should not be used to make decisions about someone's mental health or safety. Always consult with a qualified mental health professional for any concerns about suicidal thoughts or behaviors.
@@ -226,3 +274,23 @@ st.sidebar.write(f"- `stacking_classifier.joblib`")
 
 st.sidebar.header("Contact")
 st.sidebar.write("For questions or feedback, contact [Your Name or Project Name] ([Link to your GitHub or website])") # Replace with your info
+
+# --- Footer (Optional) ---
+st.markdown("""
+<style>
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #f1f1f1;
+    color: #555555;
+    text-align: center;
+    padding: 10px;
+    font-size: 0.9em;
+}
+</style>
+<div class="footer">
+    <p>Developed with ❤️ using Streamlit</p>
+</div>
+""", unsafe_allow_html=True)
