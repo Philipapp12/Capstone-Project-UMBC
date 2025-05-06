@@ -42,27 +42,34 @@ h2 {
     margin-bottom: 15px;
 }
 
-/* Text Area Styling */
+/* Text Area Styling - MODIFIED FOR VISIBILITY */
 .stTextArea [data-baseweb="base-input"] {
-    background-color: #ffffff;
+    background-color: #f0f0f0; /* Changed to light gray background */
     border: 1px solid #dddddd; /* Lighter border */
     padding: 15px; /* More padding */
     border-radius: 8px; /* More rounded corners */
     font-size: 17px; /* Slightly larger font */
     line-height: 1.6;
-    color: #000000; /* <<<--- Changed text color to black */
+    color: #333333; /* Changed text color to dark gray for better contrast */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
 .stTextArea [data-baseweb="base-input"]:focus {
     border-color: #f44336; /* Red border on focus */
     box-shadow: 0 0 8px rgba(244, 67, 54, 0.3); /* Red glow on focus */
+    color: #333333; /* Ensure text color remains dark gray on focus */
 }
 
 .stTextArea [data-baseweb="base-input"] textarea::placeholder {
     color: #aaaaaa; /* Lighter placeholder */
     font-style: italic; /* Italic placeholder */
 }
+
+/* Also target the textarea element directly within the container for added robustness */
+.stTextArea textarea {
+    color: #333333; /* Ensure text color is dark gray */
+}
+
 
 /* Button Styling */
 .stButton>button {
