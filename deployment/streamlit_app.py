@@ -1,15 +1,34 @@
 import streamlit as st
 import joblib
 import pandas as pd
+import os
+
+# --- Configuration ---
+# Define the directory where your model and preprocessing files are located
+# By default, assumes they are in the same directory as the script
+MODEL_DIR = "." # Or "models", "assets", etc. if you put them in a subdirectory
 
 # --- Load the trained objects ---
 try:
-    label_encoder = joblib.load('label_encoder.joblib')
-    tfidf_vectorizer = joblib.load('tfidf_vectorizer.joblib')
-    stacking_classifier = joblib.load('stacking_classifier.joblib')
+    label_encoder_path = os.path.join(MODEL_DIR, 'label_encoder.joblib')
+    tfidf_vectorizer_path = os.path.join(MODEL_DIR, 'tfidf_vectorizer.joblib')
+    stacking_classifier_path = os.path.join(MODEL_DIR, 'stacking_classifier.joblib')
+
+    label_encoder = joblib.load(label_encoder_path)
+    tfidf_vectorizer = joblib.load(tfidf_vectorizer_path)
+    stacking_classifier = joblib.load(stacking_classifier_path)
+
 except FileNotFoundError:
-    st.error("Error: Make sure 'label_encoder.joblib', 'tfidf_vectorizer.joblib', and 'stacking_classifier.joblib' are in the same directory as this app.")
+    st.error(f"Error: Model files not found in the '{MODEL_DIR}' directory.")
+    st.write("Please ensure the following files are in the specified directory:")
+    st.write(f"- {label_encoder_path}")
+    st.write(f"- {tfidf_vectorizer_path}")
+    st.write(f"- {stacking_classifier_path}")
     st.stop() # Stop the app if files are not found
+except Exception as e:
+    st.error(f"An error occurred while loading the model files: {e}")
+    st.stop()
+
 
 # --- Streamlit App Title and Description ---
 st.title("Suicidal Post Prediction App")
@@ -23,13 +42,25 @@ if st.button("Predict"):
     if user_input:
         # --- Preprocess the input ---
         # 1. Apply the TF-IDF Vectorizer
-        input_vectorized = tfidf_vectorizer.transform([user_input])
+        try:
+            input_vectorized = tfidf_vectorizer.transform([user_input])
+        except Exception as e:
+            st.error(f"Error during text vectorization: {e}")
+            st.stop()
 
         # --- Make the prediction ---
-        prediction_encoded = stacking_classifier.predict(input_vectorized)
+        try:
+            prediction_encoded = stacking_classifier.predict(input_vectorized)
+        except Exception as e:
+            st.error(f"Error during model prediction: {e}")
+            st.stop()
 
         # --- Decode the prediction ---
-        prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
+        try:
+            prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
+        except Exception as e:
+            st.error(f"Error during label decoding: {e}")
+            st.stop()
 
         # --- Display the result ---
         st.subheader("Prediction:")
@@ -57,7 +88,7 @@ This app uses a trained machine learning model (Stacking Classifier) with TF-IDF
 """)
 
 st.sidebar.header("Files Used")
-st.sidebar.write("- `label_encoder.joblib`")
-st.sidebar.write("- `tfidf_vectorizer.joblib`")
-st.sidebar.write("- `stacking_classifier.joblib`")
+st.sidebar.write(f"- {os.path.join(MODEL_DIR, 'label_encoder.joblib')}")
+st.sidebar.write(f"- {os.path.join(MODEL_DIR, 'tfidf_vectorizer.joblib')}")
+st.sidebar.write(f"- {os.path.join(MODEL_DIR, 'stacking_classifier.joblib')}")
 st.sidebar.write("- `requirements.txt`")
