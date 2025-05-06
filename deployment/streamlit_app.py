@@ -50,7 +50,7 @@ h2 {
     border-radius: 8px; /* More rounded corners */
     font-size: 17px; /* Slightly larger font */
     line-height: 1.6;
-    color: #333333;
+    color: #000000; /* <<<--- Changed text color to black */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
@@ -137,6 +137,12 @@ h2 {
 /* Improve spacing for list items in sidebar */
 .sidebar .sidebar-content li {
     margin-bottom: 5px;
+}
+
+/* Optional: Style for the main content area */
+.main .block-container {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
 }
 
 </style>
