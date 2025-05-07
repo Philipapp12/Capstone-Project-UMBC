@@ -1,120 +1,118 @@
 import streamlit as st
 import joblib
 import os
-import re
 
 # --- Configuration ---
-MODEL_DIR = "."  # Directory containing your model and vectorizer files
+MODEL_DIR = "."  # Directory containing model and vectorizer files
 
-# --- Text Cleaning Function ---
-# Ensure this function is identical to the one used in your training script
-def clean_text(text):
-    if isinstance(text, str):
-        text = text.lower()
-        text = re.sub(r"http\S+|www\S+|https\S+", "", text, flags=re.MULTILINE)
-        text = re.sub(r'\W', ' ', text)
-        text = re.sub(r'\d+', '', text)
-        text = re.sub(r'\b\w\b', '', text)
-        text = re.sub(r'\s+', ' ', text).strip()
-        return text
-    return ""
+# --- Load the trained objects ---
+try:
+    label_encoder_path = os.path.join(MODEL_DIR, 'label_encoder.joblib')
+    tfidf_vectorizer_path = os.path.join(MODEL_DIR, 'tfidf_vectorizer.joblib')
+    logistic_regression_model_path = os.path.join(MODEL_DIR, 'Logistic Regression_model.joblib')
+    naive_bayes_model_path = os.path.join(MODEL_DIR, 'Naive Bayes_model.joblib')
+    svm_model_path = os.path.join(MODEL_DIR, 'Support Vector Machine_model.joblib')
+    random_forest_model_path = os.path.join(MODEL_DIR, 'Random Forest_model.joblib')
+    gradient_boosting_model_path = os.path.join(MODEL_DIR, 'Gradient Boosting_model.joblib')
 
-# --- Load Models & Resources ---
-@st.cache_resource
-def load_resources(dir_path):
-    """Loads the vectorizer, and the High Risk Gradient Boosting model."""
-    try:
-        # Load only the necessary files for the High Risk Gradient Boosting approach
-        tfidf_vectorizer = joblib.load(os.path.join(dir_path, 'tfidf_vectorizer.joblib'))
-        # Load the specific Gradient Boosting model for High Risk
-        gb_high_risk_model = joblib.load(os.path.join(dir_path, 'high_risk_gradient_boosting_model.joblib')) # Assuming this filename
+    # Load the models and vectorizer
+    label_encoder = joblib.load(label_encoder_path)
+    tfidf_vectorizer = joblib.load(tfidf_vectorizer_path)
+    logistic_regression_model = joblib.load(logistic_regression_model_path)
+    naive_bayes_model = joblib.load(naive_bayes_model_path)
+    svm_model = joblib.load(svm_model_path)
+    random_forest_model = joblib.load(random_forest_model_path)
+    gradient_boosting_model = joblib.load(gradient_boosting_model_path)
 
-        # The label encoder is not strictly needed for binary probability,
-        # but load it if you want to display original labels for context (e.g., for class 0/1)
-        # label_encoder = joblib.load(os.path.join(dir_path, 'label_encoder.joblib'))
+except FileNotFoundError:
+    st.error(f"Error: Model files not found in the '{MODEL_DIR}' directory.")
+    st.write("Please ensure the following files are in the specified directory:")
+    st.write(f"- {label_encoder_path}")
+    st.write(f"- {tfidf_vectorizer_path}")
+    st.write(f"- {logistic_regression_model_path}")
+    st.write(f"- {naive_bayes_model_path}")
+    st.write(f"- {svm_model_path}")
+    st.write(f"- {random_forest_model_path}")
+    st.write(f"- {gradient_boosting_model_path}")
+    st.stop()
+except Exception as e:
+    st.error(f"An error occurred while loading the model files: {e}")
+    st.stop()
 
+# --- App UI ---
+st.title("🧠 Suicidal Post Prediction App")
+st.write("Enter a post or text below to predict if it indicates suicidal intent.")
 
-        st.success("High Risk Gradient Boosting model and vectorizer loaded successfully.")
-        # Return only the loaded objects needed
-        return tfidf_vectorizer, gb_high_risk_model #, label_encoder # Optionally return label_encoder
+# --- Input Area ---
+user_input = st.text_area("Enter the post text here:", height=150)
 
-    except FileNotFoundError as e:
-        st.error(f"Missing file: {e}. Please ensure 'tfidf_vectorizer.joblib' and 'high_risk_gradient_boosting_model.joblib' are in the '{dir_path}' directory. ('label_encoder.joblib' is also expected but not strictly needed for this specific app version).")
-        st.stop()
-    except Exception as e:
-        st.error(f"An error occurred while loading models: {e}")
-        st.stop()
-
-# Load the resources
-# tfidf_vectorizer, gb_high_risk_model, label_encoder = load_resources(MODEL_DIR) # If loading label_encoder
-tfidf_vectorizer, gb_high_risk_model = load_resources(MODEL_DIR) # If not loading label_encoder
-
-# --- UI ---
-st.title("🧠 High Suicide Risk Assessment (Gradient Boosting)")
-st.write("Enter text to assess the probability of it indicating high risk.")
-
-user_input = st.text_area("Enter your message:", height=150)
-
-if st.button("Assess Risk"):
+# --- Prediction Button ---
+if st.button("Predict"):
     if user_input:
         try:
-            cleaned = clean_text(user_input)
-            if not cleaned:
-                st.warning("After cleaning, input is empty. Please input more detailed text.")
-                st.stop()
-
-            # Transform the cleaned input
-            vec_input = tfidf_vectorizer.transform([cleaned])
-
-            # Get prediction probability for the positive class (High Risk, which is typically class 1)
-            high_risk_prob = 0.0
-
-            # Gradient Boosting models support predict_proba by default
-            if hasattr(gb_high_risk_model, 'predict_proba'):
-                 # predict_proba returns shape (n_samples, n_classes)
-                 # For binary, this is (1, 2) -> prob of class 0, prob of class 1
-                 # We want prob of class 1 (the positive class representing High Risk)
-                 high_risk_prob = gb_high_risk_model.predict_proba(vec_input)[:, 1][0]
-            else:
-                 st.warning("Gradient Boosting model does not support probability prediction.") # Should not happen for GB
-
+            # Transform the user input using the TF-IDF vectorizer
+            input_vectorized = tfidf_vectorizer.transform([user_input])
         except Exception as e:
-            st.error(f"Error during prediction: {e}")
-            # Optionally print the full traceback for debugging
-            # import traceback
-            # st.error(traceback.format_exc())
+            st.error(f"Error during text vectorization: {e}")
             st.stop()
 
-        # --- Display Results ---
-        st.subheader("Assessment Result:")
-        st.write(f"Probability of High Risk: **{high_risk_prob:.4f}**") # Display with more precision for probability
+        # Create a dictionary of models
+        models = {
+            "Logistic Regression": logistic_regression_model,
+            "Naive Bayes": naive_bayes_model,
+            "Support Vector Machine": svm_model,
+            "Random Forest": random_forest_model,
+            "Gradient Boosting": gradient_boosting_model
+        }
 
-        # Add specific messages based on a probability threshold
-        risk_threshold = 0.5 # Example threshold, adjust as needed based on your model's performance
+        predictions = {}
+        high_count = 0  # Count of 'High' or suicidal intent predictions
 
-        if high_risk_prob >= risk_threshold:
-             st.error("⚠️ High Risk suggested based on probability.")
-             st.warning("Please seek immediate help if needed.")
-             st.write("Resources:")
-             st.write("- National Suicide Prevention Lifeline: 988")
-             st.write("- Crisis Text Line: Text HOME to 741741")
-             st.write("- The Trevor Project: 1-866-488-7386")
+        try:
+            for model_name, model in models.items():
+                prediction_encoded = model.predict(input_vectorized)
+                prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
+                predictions[model_name] = prediction_label
+                if prediction_label.lower() in ['high', 'suicide']:
+                    high_count += 1
+        except Exception as e:
+            st.error(f"Error during model prediction: {e}")
+            st.stop()
+
+        # Display individual model results
+        st.subheader("Prediction Results:")
+        for model_name, prediction_label in predictions.items():
+            st.write(f"**{model_name}:** {prediction_label}")
+
+        # --- Majority Voting Decision ---
+        total_models = len(models)
+        if high_count >= total_models / 2:
+            st.error("⚠️ The majority of models predict this post **indicates suicidal intent**.")
+            st.warning("If you or someone you know needs help, please reach out to a crisis hotline or mental health professional.")
+            st.write("Here are some resources:")
+            st.write("- National Suicide Prevention Lifeline: 988")
+            st.write("- Crisis Text Line: Text HOME to 741741")
+            st.write("- The Trevor Project (for LGBTQ youth): 1-866-488-7386")
         else:
-             st.success("✅ High Risk is unlikely based on probability.")
-
-
-        st.markdown("---")
-        st.info("This assessment is based on a single model and is not a substitute for professional help.")
-
+            st.success("✅ The majority of models predict this post **does NOT indicate suicidal intent**.")
+            st.info("Please remember that this is a model's prediction and not a substitute for professional evaluation.")
     else:
-        st.warning("Please input some text before clicking the button.")
+        st.warning("Please enter some text to make a prediction.")
 
-# Sidebar info
+# --- Sidebar Info ---
 st.sidebar.header("About")
 st.sidebar.info("""
-This app uses a single Gradient Boosting model trained to predict the probability of text indicating **High** suicide risk.
+This app uses a trained machine learning model with TF-IDF vectorization to predict whether a given text post might indicate suicidal intent.
+
+**Disclaimer:** This app is for informational purposes only and should not be used as a substitute for professional medical advice, diagnosis, or treatment.
 """)
-st.sidebar.header("Expected Files")
-st.sidebar.write("- tfidf_vectorizer.joblib")
-st.sidebar.write("- high_risk_gradient_boosting_model.joblib") # Updated filename in sidebar
-# st.sidebar.write("- label_encoder.joblib (Optional)") # Removed from expected list if not loaded
+
+st.sidebar.header("Files Used")
+st.sidebar.write(f"- {label_encoder_path}")
+st.sidebar.write(f"- {tfidf_vectorizer_path}")
+st.sidebar.write(f"- {logistic_regression_model_path}")
+st.sidebar.write(f"- {naive_bayes_model_path}")
+st.sidebar.write(f"- {svm_model_path}")
+st.sidebar.write(f"- {random_forest_model_path}")
+st.sidebar.write(f"- {gradient_boosting_model_path}")
+st.sidebar.write("- `requirements.txt`")
