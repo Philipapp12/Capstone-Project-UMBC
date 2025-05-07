@@ -180,7 +180,6 @@ User Feedback Integration: Plan to incorporate insights from mental health profe
 
 Multimodal Expansion: Future work includes integrating additional data types—such as images and audio—to enable a more holistic risk assessment.
 
-Ethical Framework: Ongoing development of ethical guidelines to ensure responsible and sensitive use of predictive technologies in mental health.
 
 
 # Link to the Suicide Prevention Risk Predictor
