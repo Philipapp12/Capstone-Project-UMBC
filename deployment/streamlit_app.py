@@ -14,7 +14,7 @@ try:
     svm_model_path = os.path.join(MODEL_DIR, 'Support Vector Machine_model.joblib')
     random_forest_model_path = os.path.join(MODEL_DIR, 'Random Forest_model.joblib')
     gradient_boosting_model_path = os.path.join(MODEL_DIR, 'Gradient Boosting_model.joblib')
-    xgboost_model_path = os.path.join(MODEL_DIR, 'XGBoost_model.joblib')
+
 
     # Load the models and vectorizer
     label_encoder = joblib.load(label_encoder_path)
@@ -24,7 +24,7 @@ try:
     svm_model = joblib.load(svm_model_path)
     random_forest_model = joblib.load(random_forest_model_path)
     gradient_boosting_model = joblib.load(gradient_boosting_model_path)
-    xgboost_model = joblib.load(xgboost_model_path)
+   
 
 except FileNotFoundError:
     st.error(f"Error: Model files not found in the '{MODEL_DIR}' directory.")
@@ -36,7 +36,6 @@ except FileNotFoundError:
     st.write(f"- {svm_model_path}")
     st.write(f"- {random_forest_model_path}")
     st.write(f"- {gradient_boosting_model_path}")
-    st.write(f"- {xgboost_model_path}")
     st.stop()
 except Exception as e:
     st.error(f"An error occurred while loading the model files: {e}")
@@ -65,8 +64,7 @@ if st.button("Predict"):
             "Naive Bayes": naive_bayes_model,
             "Support Vector Machine": svm_model,
             "Random Forest": random_forest_model,
-            "Gradient Boosting": gradient_boosting_model,
-            "XGBoost": xgboost_model
+            "Gradient Boosting": gradient_boosting_model
         }
 
         # Store the predictions of all models
@@ -116,5 +114,4 @@ st.sidebar.write(f"- {naive_bayes_model_path}")
 st.sidebar.write(f"- {svm_model_path}")
 st.sidebar.write(f"- {random_forest_model_path}")
 st.sidebar.write(f"- {gradient_boosting_model_path}")
-st.sidebar.write(f"- {xgboost_model_path}")
 st.sidebar.write("- `requirements.txt`")
