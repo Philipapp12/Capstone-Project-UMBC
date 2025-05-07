@@ -9,8 +9,6 @@ This project aims to develop NLP-based predictive models to identify high-risk i
 Project Description
 
 Dataset
-![Visualization](Visualization/2.png)
-
 
 Methodology
 
@@ -31,7 +29,7 @@ The project focuses on predicting suicide risk levels using NLP techniques on te
 The dataset consists of posts from the following subreddits:
 Mental health-related subreddits: r/SuicideWatch, r/depression, r/mentalhealth
 Neutral/positive subreddits: r/AskReddit, r/movies, r/happy
-
+![Visualization](Visualization/2.png)
 # Reddit Data Collection Script for Suicide Prediction
 
 To gather data for our suicide prediction project, our team scraped Reddit posts from two types of subreddits: one focused on suicidal thoughts (e.g., r/SuicideWatch) and another with general or positive content (e.g., r/happy). Instead of using Reddit’s official API, which has rate limits, our team used the Pushshift API (https://pushshift.io/), designed for large-scale Reddit data extraction.
