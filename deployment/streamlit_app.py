@@ -9,11 +9,11 @@ MODEL_DIR = "models/Traditional/"  # Directory containing model and vectorizer f
 try:
     label_encoder_path = os.path.join(MODEL_DIR, 'label_encoder.joblib')
     tfidf_vectorizer_path = os.path.join(MODEL_DIR, 'tfidf_vectorizer.joblib')
-    logistic_regression_model_path = os.path.join(MODEL_DIR, 'Logistic Regression_model.joblib')
-    naive_bayes_model_path = os.path.join(MODEL_DIR, 'Naive Bayes_model.joblib')
-    svm_model_path = os.path.join(MODEL_DIR, 'Support Vector Machine_model.joblib')
-    random_forest_model_path = os.path.join(MODEL_DIR, 'Random Forest_model.joblib')
-    gradient_boosting_model_path = os.path.join(MODEL_DIR, 'Gradient Boosting_model.joblib')
+    logistic_regression_model_path = os.path.join(MODEL_DIR, 'logistic_regression.pkl')
+    naive_bayes_model_path = os.path.join(MODEL_DIR, 'naive_bayes.pkl')
+    svm_model_path = os.path.join(MODEL_DIR, 'support_vector_machine.pkl')
+    random_forest_model_path = os.path.join(MODEL_DIR, 'random_forest.pkl')
+    gradient_boosting_model_path = os.path.join(MODEL_DIR, 'gradient_boosting.pkl')
 
     # Load the models and vectorizer
     label_encoder = joblib.load(label_encoder_path)
