@@ -47,9 +47,9 @@ Creation timestamp
 Engagement metrics (upvotes, comments)
 
 Sentiment scores
-![Visualization](Visualization/1.png)
+
 Risk level labels (High, Medium, Low)
-![Visualization](Visualization/2.png)
+
 The cleaned dataset is saved as Cleaned_SuicideWatch_Dataset.csv
 
 
@@ -67,15 +67,16 @@ Feature Engineering: Extracting temporal features (hour, day_of_week) from times
 # Exploratory Data Analysis (EDA)
 
 Distribution of sentiment scores
-
+![Visualization](Visualization/1.png)
 Risk level distribution
+![Visualization](Visualization/2.png)
 
 Posting activity by day of the week
-
+![Visualization](Visualization/3.png)
 Word clouds for high-risk posts
-
+![Visualization](Visualization/4.png)
 Correlation heatmap between engagement metrics and sentiment
-
+![Visualization](Visualization/5.png)
 # Modeling
 
 # Traditional Machine Learning Models:
