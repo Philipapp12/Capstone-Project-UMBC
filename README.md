@@ -38,7 +38,7 @@ We developed a Python script that fetches posts in batches of 100, extracting ke
 
 The script runs until approximately 100,000 posts from each subreddit are collected, then merges the datasets into a single CSV file. This creates a balanced, high-quality dataset ready for further preprocessing and model training. This automated pipeline allows our team to efficiently build a large-scale dataset without manual effort.
 
-The dataset includes features such as:
+# The dataset includes features such as:
 
 Post text content
 
