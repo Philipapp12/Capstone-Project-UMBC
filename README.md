@@ -30,7 +30,13 @@ The dataset consists of posts from the following subreddits:
 Mental health-related subreddits: r/SuicideWatch, r/depression, r/mentalhealth
 Neutral/positive subreddits: r/AskReddit, r/movies, r/happy
 
+# Reddit Data Collection Script for Suicide Prediction
 
+To gather data for our suicide prediction project, our team scraped Reddit posts from two types of subreddits: one focused on suicidal thoughts (e.g., r/SuicideWatch) and another with general or positive content (e.g., r/happy). Instead of using Reddit’s official API, which has rate limits, our team used the Pushshift API (https://pushshift.io/), designed for large-scale Reddit data extraction.
+
+We developed a Python script that fetches posts in batches of 100, extracting key fields like title, selftext, score, comments, and timestamp. Posts are labeled as 'suicide' or 'normal' based on their subreddit. To prevent overloading the API, a 1-second delay is included between requests.
+
+The script runs until approximately 100,000 posts from each subreddit are collected, then merges the datasets into a single CSV file. This creates a balanced, high-quality dataset ready for further preprocessing and model training. This automated pipeline allows our team to efficiently build a large-scale dataset without manual effort.
 
 The dataset includes features such as:
 
@@ -49,13 +55,7 @@ The cleaned dataset is saved as Cleaned_SuicideWatch_Dataset.csv
 
 # Methodology
 
-# Reddit Data Collection Script for Suicide Prediction
 
-To gather data for our suicide prediction project, our team scraped Reddit posts from two types of subreddits: one focused on suicidal thoughts (e.g., r/SuicideWatch) and another with general or positive content (e.g., r/happy). Instead of using Reddit’s official API, which has rate limits, our team used the Pushshift API (https://pushshift.io/), designed for large-scale Reddit data extraction.
-
-We developed a Python script that fetches posts in batches of 100, extracting key fields like title, selftext, score, comments, and timestamp. Posts are labeled as 'suicide' or 'normal' based on their subreddit. To prevent overloading the API, a 1-second delay is included between requests.
-
-The script runs until approximately 100,000 posts from each subreddit are collected, then merges the datasets into a single CSV file. This creates a balanced, high-quality dataset ready for further preprocessing and model training. This automated pipeline allows our team to efficiently build a large-scale dataset without manual effort.
 # Data Preprocessing
 
 Text Cleaning: Lowercasing, URL removal, punctuation removal, and digit removal.
