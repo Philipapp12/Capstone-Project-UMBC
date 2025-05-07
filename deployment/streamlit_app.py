@@ -15,7 +15,6 @@ try:
     random_forest_model_path = os.path.join(MODEL_DIR, 'Random Forest_model.joblib')
     gradient_boosting_model_path = os.path.join(MODEL_DIR, 'Gradient Boosting_model.joblib')
 
-
     # Load the models and vectorizer
     label_encoder = joblib.load(label_encoder_path)
     tfidf_vectorizer = joblib.load(tfidf_vectorizer_path)
@@ -24,7 +23,6 @@ try:
     svm_model = joblib.load(svm_model_path)
     random_forest_model = joblib.load(random_forest_model_path)
     gradient_boosting_model = joblib.load(gradient_boosting_model_path)
-   
 
 except FileNotFoundError:
     st.error(f"Error: Model files not found in the '{MODEL_DIR}' directory.")
@@ -67,33 +65,36 @@ if st.button("Predict"):
             "Gradient Boosting": gradient_boosting_model
         }
 
-        # Store the predictions of all models
         predictions = {}
+        high_count = 0  # Count of 'High' or suicidal intent predictions
 
         try:
             for model_name, model in models.items():
                 prediction_encoded = model.predict(input_vectorized)
                 prediction_label = label_encoder.inverse_transform(prediction_encoded)[0]
                 predictions[model_name] = prediction_label
+                if prediction_label.lower() in ['high', 'suicide']:
+                    high_count += 1
         except Exception as e:
             st.error(f"Error during model prediction: {e}")
             st.stop()
 
-        # Display the result for all models
+        # Display individual model results
         st.subheader("Prediction Results:")
         for model_name, prediction_label in predictions.items():
             st.write(f"**{model_name}:** {prediction_label}")
 
-        # --- Display the most critical prediction ---
-        if 'suicide' in predictions.values():
-            st.error("⚠️ The model predicts this post **indicates suicidal intent**.")
+        # --- Majority Voting Decision ---
+        total_models = len(models)
+        if high_count >= total_models / 2:
+            st.error("⚠️ The majority of models predict this post **indicates suicidal intent**.")
             st.warning("If you or someone you know needs help, please reach out to a crisis hotline or mental health professional.")
             st.write("Here are some resources:")
             st.write("- National Suicide Prevention Lifeline: 988")
             st.write("- Crisis Text Line: Text HOME to 741741")
             st.write("- The Trevor Project (for LGBTQ youth): 1-866-488-7386")
         else:
-            st.success("✅ The model predicts this post **does NOT indicate suicidal intent**.")
+            st.success("✅ The majority of models predict this post **does NOT indicate suicidal intent**.")
             st.info("Please remember that this is a model's prediction and not a substitute for professional evaluation.")
     else:
         st.warning("Please enter some text to make a prediction.")
