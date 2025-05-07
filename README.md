@@ -9,8 +9,8 @@ This project aims to develop NLP-based predictive models to identify high-risk i
 Project Description
 
 Dataset
+![Visualization](Visualization/2.png)
 
-![Visualization](Visualization/1.png)
 
 Methodology
 
