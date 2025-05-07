@@ -4,9 +4,12 @@ import os
 import re # Import re for the clean_text function
 
 # --- Configuration ---
-# Assuming the 'saved_models' directory is at the same level as your Streamlit app script
-MODEL_DIR =  "deployment/"
+# Update the MODEL_DIR to the current directory since streamlit_app.py
+# is in the same directory as the .joblib files
+MODEL_DIR = "." # Or you could use ""
+
 # --- Function to clean text (MUST be the same as used during training) ---
+# Ensure this function is identical to the one used in your training script
 def clean_text(text):
     if isinstance(text, str):
         text = text.lower()
@@ -23,7 +26,8 @@ def clean_text(text):
 def load_resources(model_directory):
     """Loads the vectorizer, label encoder, and trained models."""
     try:
-        # Construct full paths to the .joblib files
+        # Construct full paths to the .joblib files within the specified directory
+        # Since model_directory is '.', this will just be the filenames
         label_encoder_path = os.path.join(model_directory, 'label_encoder.joblib')
         tfidf_vectorizer_path = os.path.join(model_directory, 'tfidf_vectorizer.joblib')
         overall_model_path = os.path.join(model_directory, 'overall_risk_xgboost_model.joblib')
@@ -40,20 +44,21 @@ def load_resources(model_directory):
         loaded_medium_risk_model = joblib.load(medium_risk_model_path)
         loaded_high_risk_model = joblib.load(high_risk_model_path)
 
-        st.success("Models and vectorizer loaded successfully!")
+        st.success(f"Models and vectorizer loaded successfully from '{model_directory}'!")
 
         # Return all loaded objects
         return (loaded_label_encoder, loaded_tfidf_vectorizer, loaded_overall_model,
                 loaded_low_risk_model, loaded_medium_risk_model, loaded_high_risk_model)
 
     except FileNotFoundError as e:
-        st.error(f"Error loading model files: {e}. Please ensure the '{model_directory}' directory exists and contains all required .joblib files.")
+        st.error(f"Error loading model files: {e}. Please ensure the '{model_directory}' directory contains all required .joblib files.")
         st.stop() # Stop the app if files are missing
     except Exception as e:
         st.error(f"An error occurred while loading resources: {e}")
         st.stop() # Stop for other loading errors
 
 # Load the resources when the app starts
+# Pass the updated MODEL_DIR (which is '.') to the loading function
 label_encoder, tfidf_vectorizer, overall_model, low_risk_model, medium_risk_model, high_risk_model = load_resources(MODEL_DIR)
 
 
@@ -71,6 +76,11 @@ if st.button("Assess Risk"):
             # 1. Clean the user input using the same function as training
             cleaned_input = clean_text(user_input)
 
+            # Handle cases where cleaning results in an empty string
+            if not cleaned_input:
+                st.warning("Input text was cleaned to an empty string. Please try different text.")
+                st.stop()
+
             # 2. Transform the cleaned input using the loaded TF-IDF vectorizer
             # Pass as a list because .transform expects iterable input
             input_vectorized = tfidf_vectorizer.transform([cleaned_input])
@@ -87,26 +97,32 @@ if st.button("Assess Risk"):
             # Check if the model has predict_proba method
             low_risk_prob = 0.0
             if hasattr(low_risk_model, 'predict_proba'):
-                low_risk_prob = low_risk_model.predict_proba(input_vectorized)[:, 1][0] # Probability of the positive class (1)
+                # predict_proba returns shape (n_samples, n_classes)
+                # For binary, this is (1, 2) -> prob of class 0, prob of class 1
+                # We want prob of class 1 (the positive class)
+                low_risk_prob = low_risk_model.predict_proba(input_vectorized)[:, 1][0]
             else:
                  st.warning("Low Risk model does not support probability prediction.")
 
             medium_risk_prob = 0.0
             if hasattr(medium_risk_model, 'predict_proba'):
-                 medium_risk_prob = medium_risk_model.predict_proba(input_vectorized)[:, 1][0] # Probability of the positive class (1)
+                 medium_risk_prob = medium_risk_model.predict_proba(input_vectorized)[:, 1][0]
             else:
                  st.warning("Medium Risk (SVM) model might not have probability=True enabled during training.")
 
 
             high_risk_prob = 0.0
             if hasattr(high_risk_model, 'predict_proba'):
-                high_risk_prob = high_risk_model.predict_proba(input_vectorized)[:, 1][0] # Probability of the positive class (1)
+                high_risk_prob = high_risk_model.predict_proba(input_vectorized)[:, 1][0]
             else:
                  st.warning("High Risk model does not support probability prediction.")
 
 
         except Exception as e:
             st.error(f"An error occurred during prediction: {e}")
+            # Optionally print the full traceback for debugging
+            # import traceback
+            # st.error(traceback.format_exc())
             st.stop()
 
         # --- Display Results ---
@@ -147,6 +163,7 @@ This app uses machine learning models trained on text data to assess potential s
 """)
 
 st.sidebar.header("Files Loaded")
+# List the expected files in the specified directory (which is the current directory)
 st.sidebar.write(f"- {MODEL_DIR}/label_encoder.joblib")
 st.sidebar.write(f"- {MODEL_DIR}/tfidf_vectorizer.joblib")
 st.sidebar.write(f"- {MODEL_DIR}/overall_risk_xgboost_model.joblib")
