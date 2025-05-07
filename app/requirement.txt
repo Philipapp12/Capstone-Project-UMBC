@@ -1,7 +1,7 @@
 streamlit
-pickle
 pandas
 scikit-learn
 nltk
 xgboost
 termcolor
+pickle
