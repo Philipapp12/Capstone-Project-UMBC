@@ -5,7 +5,7 @@ import re # Import re for the clean_text function
 
 # --- Configuration ---
 # Assuming the 'saved_models' directory is at the same level as your Streamlit app script
-MODEL_DIR = "saved_models"
+MODEL_DIR = "."
 
 # --- Function to clean text (MUST be the same as used during training) ---
 def clean_text(text):
