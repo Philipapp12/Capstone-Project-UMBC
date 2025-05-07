@@ -1,7 +1,7 @@
 streamlit
-pandas
-scikit-learn
-nltk
-xgboost
-termcolor
+pandas==2.2.2
+scikit-learn==1.5.1
+nltk==3.9.1
+xgboost==2.1.4
+termcolor==3.0.1
 pickle
