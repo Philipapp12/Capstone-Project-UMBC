@@ -174,13 +174,13 @@ Community Moderation: Assists moderators in identifying and supporting users in 
 
 # Future Work
 
-Model Deployment: Developing an API to deploy the best-performing models for real-time risk assessment.
+Model Deployment: Successfully deployed the best-performing models via a Streamlit web application for real-time suicide risk assessment.
 
-User Feedback Loop: Incorporating feedback from mental health professionals to refine model predictions.
+User Feedback Integration: Plan to incorporate insights from mental health professionals to continuously refine and validate model predictions.
 
-Multimodal Analysis: Exploring the integration of text, image, and audio data for a more comprehensive risk assessment.
+Multimodal Expansion: Future work includes integrating additional data types—such as images and audio—to enable a more holistic risk assessment.
 
-Ethical Considerations: Developing guidelines for ethical use of predictive models in mental health contexts.
+Ethical Framework: Ongoing development of ethical guidelines to ensure responsible and sensitive use of predictive technologies in mental health.
 
 
 # Link to the Suicide Prevention Risk Predictor
