@@ -1,14 +1,17 @@
 import streamlit as st
-import joblib
+import pickle
 import pandas as pd
 import re
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-# Load the saved components
+# Load the saved components using pickle
 try:
-    stacking_clf = joblib.load("overall_risk_stacking_model.joblib")
-    vectorizer = joblib.load("tfidf_vectorizer.joblib")
-    label_encoder = joblib.load("label_encoder.joblib")
+    with open("overall_risk_stacking_model.pkl", "rb") as f:
+        stacking_clf = pickle.load(f)
+    with open("tfidf_vectorizer.pkl", "rb") as f:
+        vectorizer = pickle.load(f)
+    with open("label_encoder.pkl", "rb") as f:
+        label_encoder = pickle.load(f)
 except Exception as e:
     st.error(f"Error loading model components: {e}")
     st.stop()
