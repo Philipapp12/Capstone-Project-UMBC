@@ -1,5 +1,4 @@
-
-Capstone-Project-UMBC/Visualization/1.png
+![Visualization](Visualization/1.png)
 
 
 # Leveraging NLP Predictive Models for Suicide Prevention
