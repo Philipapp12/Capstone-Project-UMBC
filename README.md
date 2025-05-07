@@ -182,3 +182,5 @@ Multimodal Analysis: Exploring the integration of text, image, and audio data fo
 Ethical Considerations: Developing guidelines for ethical use of predictive models in mental health contexts.
 
 
+# Link to the Suicide Prevention Risk Predictor
+https://capstone-project-umbc-q57vhlkqcobgeawqq6z6xd.streamlit.app/
