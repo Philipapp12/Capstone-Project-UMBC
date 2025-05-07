@@ -182,10 +182,3 @@ Multimodal Analysis: Exploring the integration of text, image, and audio data fo
 Ethical Considerations: Developing guidelines for ethical use of predictive models in mental health contexts.
 
 
-
-
-The project demonstrates the power of NLP and machine learning in addressing critical public health issues. 
-
-By leveraging social media data, we can develop tools that potentially save lives.
-
-
