@@ -3,7 +3,7 @@ import joblib
 import os
 
 # --- Configuration ---
-MODEL_DIR = "models"  # Directory containing model and vectorizer files
+MODEL_DIR = "models/Traditional/"  # Directory containing model and vectorizer files
 
 # --- Load the trained objects ---
 try:
