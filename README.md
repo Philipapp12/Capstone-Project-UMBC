@@ -182,8 +182,8 @@ Multimodal Expansion: Future work includes integrating additional data types—s
 
 
 
-# Link to the Suicide Prevention Risk Predictor
-https://capstone-project-umbc-q57vhlkqcobgeawqq6z6xd.streamlit.app/
+# Suicide Prevention Risk Predictor
+Link: https://capstone-project-umbc-q57vhlkqcobgeawqq6z6xd.streamlit.app/
 
 
 ![Visualization](Visualization/Streamlit_Predictor_App.png)
