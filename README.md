@@ -186,4 +186,4 @@ Multimodal Expansion: Future work includes integrating additional data types—s
 https://capstone-project-umbc-q57vhlkqcobgeawqq6z6xd.streamlit.app/
 
 
-![Visualization](Visualization/Streamlit_Predictor_AppStreamlit_Predictor_App)
+![Visualization](Visualization/Streamlit_Predictor_AppStreamlit_Predictor_App.png)
